@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wise Words</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body>
+    <div class="container mt-5" style="background-color: white;">
+        <h1>Wise Words</h1>
+        <form method="POST" action="/quotes">
+            <div class="form-group">
+                <label for="category">Select a category:</label>
+                <select class="form-control" id="category" name="category">
+                    <option value="all">All categories</option>
+                    <option value="Creativity">Creativity</option>
+                    <option value="Nature">Nature</option>
+                    <option value="Friendship">Friendship</option>
+                    <option value="inspiration">Inspiration</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
