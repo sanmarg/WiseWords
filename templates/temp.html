@@ -1,0 +1,564 @@
+<style>
+/* Set the font family and color for the entire page */
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  line-height: 1.5;
+  background: linear-gradient(to bottom right, #fcb69f, #e53e3e);
+}
+
+/* Style the headings */
+h1, h2, h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+h1 {
+  font-size: 4rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+h2 {
+  font-size: 3rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+h3 {
+  font-size: 2rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+/* Style the paragraphs */
+p {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #fff;
+  text-align: justify;
+}
+
+/* Style the lists */
+ul {
+  list-style-type: none;
+  margin: 1rem 0;
+  padding: 0;
+  text-align: center;
+}
+
+li {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #fff;
+  text-align: left;
+}
+
+/* Add a background pattern to the page */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('https://i.imgur.com/0IYdoYH.png');
+  opacity: 0.2;
+  z-index: -1;
+}
+
+</style>
+<body>
+  
+<h1>Quotable</h1>
+<p><a href="https://github.com/lukePeavey/quotable/actions/workflows/tests.yml"><img alt="CI Tests" src="https://github.com/lukePeavey/quotable/actions/workflows/tests.yml/badge.svg" /></a>&nbsp; &nbsp;</p>
+<p>Quotable is a free, open source quotations API. It was originally built as part of a <a href="https://www.freecodecamp.org/">FreeCodeCamp</a> project. If you are interested in contributing, please check out the <a href="CONTRIBUTING.md">Contributors Guide</a>.</p>
+<h3>Rate Limit</h3>
+<p>There is a rate limit of <strong>180 requests per minute</strong>, per IP address. If you exceed the rate limit, the API will respond with a <code>429</code> error.</p>
+<h3>API Servers</h3>
+<p><code>https://api.quotable.io</code></p>
+<h3>Postman</h3>
+<p>You can try out the API on our public Postman workspace. </p>
+<p><a href="https://www.postman.com/quotable/workspace/quotable"><img alt="Run in Postman" src="https://run.pstmn.io/button.svg" /></a></p>
+<h2>API Reference <!-- omit in toc --></h2>
+<ul>
+<li><a href="#get-random-quote">Get random quote</a></li>
+<li><a href="#get-random-quotes">Get Random Quotes</a></li>
+<li><a href="#list-quotes">List Quotes</a></li>
+<li><a href="#get-quote-by-id">Get Quote By ID</a></li>
+<li><a href="#list-authors">List Authors</a></li>
+<li><a href="#search-quotes-beta">Search Quotes (beta)</a></li>
+<li><a href="#search-authors-beta">Search Authors (beta)</a></li>
+<li><a href="#get-author-by-slug">Get Author By Slug</a></li>
+<li><a href="#list-tags">List Tags</a></li>
+</ul>
+<h2>Examples <!-- omit in toc --></h2>
+<ul>
+<li><a href="https://codepen.io/lukePeavey/pen/RwNVeQG">Basic Quote Machine (CodePen)</a></li>
+<li><a href="https://codesandbox.io/s/quotable-demo-react-e7zm1?fontsize=14&amp;hidenavigation=1&amp;module=%2Fsrc%2FApp.js&amp;theme=dark">React Quote Machine (CodeSandbox)</a></li>
+<li><a href="https://github.com/siddsarkar/SociQuote">React Native App (Github)</a></li>
+<li><a href="https://codesandbox.io/s/quotable-author-list-2-14le9">Paginated Author List (codeSandbox)</a></li>
+<li><a href="https://codesandbox.io/s/quotable-get-quotes-with-author-details-iyxw8">Paginated Quote List (codeSandbox)</a></li>
+</ul>
+<h2>Get random quote</h2>
+<p><code>HTTP
+GET /random</code></p>
+<p>Returns a single random quote from the database</p>
+<blockquote>
+<p>⛔️ This method is deprecated in favor of <a href="#get-random-quotes">Get Random Quotes</a></p>
+</blockquote>
+<p><strong>Query parameters</strong></p>
+<p>| param     | type     | Description                                                                                                                                                                                                                                                                                                                          |
+| :-------- | :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| maxLength | <code>Int</code>    | The maximum Length in characters ( can be combined with <code>minLength</code> )                                                                                                                                                                                                                                                                |
+| minLength | <code>Int</code>    | The minimum Length in characters ( can be combined with <code>maxLength</code> )                                                                                                                                                                                                                                                                |
+| tags      | <code>String</code> | Get a random quote with specific tag(s). This takes a list of one or more tag names, separated by a comma (meaning <code>AND</code>) or a pipe (meaning <code>OR</code>). A comma separated list will match quotes that have <strong><em>all</em></strong> of the given tags. While a pipe (<code>\|</code>) separated list will match quotes that have <strong>any one</strong> of the provided tags. Tag names are <strong>not</strong> case-sensitive. Multi-word tags can be kebab-case ("tag-name") or space separated ("tag name") |
+| author    | <code>String</code> | Get a random quote by one or more authors. The value can be an author <code>name</code> or <code>slug</code>. To include quotes by multiple authors, provide a pipe-separated list of author names/slugs.                                                                                                                                                  |
+| authorId  | <code>String</code> | <code>deprecated</code> <br> Same as <code>author</code> param, except it uses author <code>_id</code> instead of <code>slug</code>                                                                                                                                                                                                                                          |</p>
+<p><strong>Response</strong></p>
+<p><code>ts
+{
+  _id: string
+  // The quotation text
+  content: string
+  // The full name of the author
+  author: string
+  // The `slug` of the quote author
+  authorSlug: string
+  // The length of quote (number of characters)
+  length: number
+  // An array of tag names for this quote
+  tags: string[]
+}</code>
+<br></p>
+<h2>Get Random Quotes</h2>
+<p><code>HTTP
+GET /quotes/random</code></p>
+<p>Get one or more random quotes from the database.  This method supports several filters that can be used to get random quotes with specific properties (ie tags, quote length, etc.)</p>
+<p>By default, this methods returns a single random quote. You can specify the number of random quotes to return via the <code>limit</code> parameter.  </p>
+<blockquote>
+<p>⚠️ This method is equivalent to the <code>/random</code> endpoint. The only difference is the response format:
+Instead of retuning a single <code>Quote</code> object, this method returns an <code>Array</code> of <code>Quote</code> objects.</p>
+</blockquote>
+<p><br></p>
+<p>| param     | type     | Description                                                                                                                                                                                                                                                                                                                          | 
+| :-------- | :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | 
+| limit     | <code>Int</code>    | <code>default: 1</code> &nbsp; <code>min: 1</code> &nbsp; <code>max: 50</code> <br> The number of random quotes to retrieve.                                                                                                                                                                       |
+| maxLength | <code>Int</code>    | The maximum Length in characters ( can be combined with <code>minLength</code> )                                                                                                                                                                                                                                                                |
+| minLength | <code>Int</code>    | The minimum Length in characters ( can be combined with <code>maxLength</code> )                                                                                                                                                                                                                                                                |
+| tags      | <code>String</code> | Get a random quote with specific tag(s). This takes a list of one or more tag names, separated by a comma (meaning <code>AND</code>) or a pipe (meaning <code>OR</code>). A comma separated list will match quotes that have <strong><em>all</em></strong> of the given tags. While a pipe (<code>\|</code>) separated list will match quotes that have <strong>any one</strong> of the provided tags. Tag names are <strong>not</strong> case-sensitive. Multi-word tags can be kebab-case ("tag-name") or space separated ("tag name") |
+| author    | <code>String</code> | Get a random quote by one or more authors. The value can be an author <code>name</code> or <code>slug</code>. To include quotes by multiple authors, provide a pipe-separated list of author names/slugs.                                                                                                                                                  |
+| authorId  | <code>String</code> | <code>deprecated</code> <br>Same as <code>author</code> param, except it uses author <code>_id</code> instead of <code>slug</code>                                                                                                                                                                                                                                          | </p>
+<p><strong>Response</strong></p>
+<p><code>ts
+// An array containing one or more Quotes
+Array&lt;{
+  _id: string
+  // The quotation text
+  content: string
+  // The full name of the author
+  author: string
+  // The `slug` of the quote author
+  authorSlug: string
+  // The length of quote (number of characters)
+  length: number
+  // An array of tag names for this quote
+  tags: string[]
+}&gt;</code></p>
+<p><strong>Examples</strong></p>
+<p>Get random quote <a href="https://api.quotable.io/quotes/random">try in browser</a></p>
+<p><code>HTTP
+GET /quotes/random</code></p>
+<p>Get 5 random quotes <a href="https://api.quotable.io/quotes/random?limit=3">try in browser</a></p>
+<p><code>HTTP
+GET /quotes/random?limit=3</code></p>
+<p>Random Quote with tags "technology" <strong><code>AND</code></strong> "famous-quotes" <a href="https://api.quotable.io/quotes/random?tags=technology,famous-quotes">try in browser</a></p>
+<p><code>HTTP
+GET /quotes/random?tags=technology,famous-quotes</code></p>
+<p>Random Quote with tags "History" <strong><code>OR</code></strong> "Civil Rights" <a href="https://api.quotable.io/quotes/random?tags=history|civil-rights">try in browser</a></p>
+<p><code>HTTP
+GET /quotes/random?tags=history|civil-rights</code></p>
+<p>Random Quote with a maximum length of 50 characters <a href="https://api.quotable.io/quotes/random?maxLength=50">try in browser</a></p>
+<p><code>HTTP
+GET /quotes/random?maxLength=50</code></p>
+<p>Random Quote with a length between 100 and 140 characters <a href="https://api.quotable.io/quotes/random?minLength=100&amp;maxLength=140">try in browser</a></p>
+<p><code>HTTP
+GET /quotes/random?minLength=100&amp;maxLength=140</code></p>
+<p><br></p>
+<h2>List Quotes</h2>
+<p><code>HTTP
+GET /quotes</code></p>
+<p>Get all quotes matching a given query. By default, this will return a paginated list of all quotes, sorted by <code>_id</code>. Quotes can also be filter by author, tag, and length.</p>
+<p><strong>Query parameters</strong></p>
+<p>| param     | type     | Description                                                                                                                                                                                                                                                                                                      |
+| :-------- | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| maxLength | <code>Int</code>    | The maximum Length in characters ( can be combined with <code>minLength</code> )                                                                                                                                                                                                                                            |
+| minLength | <code>Int</code>    | The minimum Length in characters ( can be combined with <code>maxLength</code> )                                                                                                                                                                                                                                            |
+| tags      | <code>String</code> | Filter quotes by tag(s). Takes a list of one or more tag names, separated by a comma (meaning <code>AND</code>) or a pipe (meaning <code>OR</code>). A comma separated list will match quotes that have <strong><em>all</em></strong> of the given tags. While a pipe (<code>\|</code>) separated list will match quotes that have <strong><em>either</em></strong> of the provided tags.  Tag names are <strong>not</strong> case-sensitive. Multi-word tags can be kebab-case ("tag-name") or space separated ("tag name") |
+| author    | <code>String</code> | Get quotes by a specific author. The value can be an author <code>name</code> or <code>slug</code>. To get quotes by multiple authors, provide a pipe separated list of author names/slugs.                                                                                                                                            |
+| authorId  | <code>String</code> | <code>deprecated</code> <br> Same as <code>author</code> param, except it uses author <code>_id</code> instead of <code>slug</code>                                                                                                                                                                                                                      |
+| sortBy    | <code>enum</code>   | <code>Default: "dateAdded"</code> &nbsp; <code>values: "dateAdded", "dateModified", "author", "content"</code> <br> The field used to sort quotes                                                                                                                                                                                  |
+| order     | <code>enum</code>   | <code>values: "asc", "desc"</code> &nbsp; <code>default: depends on sortBy</code> <br> The order in which results are sorted. The default order depends on the sortBy field. For string fields that are sorted alphabetically, the default order is ascending. For number and date fields, the default order is descending.        |
+| limit     | <code>Int</code>    | <code>Min: 1</code> &nbsp; <code>Max: 150</code> &nbsp; <code>Default: 20</code> <br> Sets the number of results per page.                                                                                                                                                                                                                    |
+| page      | <code>Int</code>    | <code>Min: 1</code> &nbsp; <code>Default: 1</code> <br> The page of results to return. If the value is greater than the total number of pages, request will not return any results                                                                                                                                                 |</p>
+<p><strong>Response</strong></p>
+<p><code>ts
+{
+  // The number of quotes returned in this response
+  count: number
+  // The total number of quotes matching this query
+  totalCount: number
+  // The current page number
+  page: number
+  // The total number of pages matching this request
+  totalPages: number
+  // The 1-based index of the last result included in the current response.
+  lastItemIndex: number
+  // The array of quotes
+  results: Array&lt;{
+    _id: string
+    // The quotation text
+    content: string
+    // The full name of the author
+    author: string
+    // The `slug` of the quote author
+    authorSlug: string
+    // The length of quote (number of characters)
+    length: number
+    // An array of tag names for this quote
+    tags: string[]
+  }&gt;
+}</code></p>
+<p><strong>Examples</strong></p>
+<p>Get the first page of quotes, with 20 results per page <a href="https://api.quotable.io/quotes?page=1">try in browser</a></p>
+<p><code>HTTP
+GET /quotes?page=1</code></p>
+<p>Get the second page of quotes, with 20 results per page <a href="https://api.quotable.io/quotes?page=2">try in browser</a></p>
+<p><code>HTTP
+GET /quotes?page=2</code></p>
+<p>Get all quotes with the tags <code>love</code> <code>OR</code> <code>happiness</code> <a href="https://api.quotable.io/quotes?tags=love|happiness">try in browser</a></p>
+<p><code>HTTP
+GET /quotes?tags=love|happiness</code></p>
+<p>Get all quotes with the tags <code>technology</code> <code>AND</code> <code>famous-quotes</code> <a href="https://api.quotable.io/quotes?tags=technology,famous-quotes">try in browser</a></p>
+<p><code>HTTP
+GET /quotes?tags=technology,famous-quotes</code></p>
+<p>Get all quotes by author, using the author's <code>slug</code>. <a href="https://api.quotable.io/quotes?author=albert-einstein">try in browser</a></p>
+<p><code>HTTP
+GET /quotes?author=albert-einstein</code></p>
+<p><br></p>
+<h2>Get Quote By ID</h2>
+<p><code>HTTP
+GET /quotes/:id</code></p>
+<p>Get a quote by its ID</p>
+<p><strong>Response</strong></p>
+<p><code>ts
+{
+  _id: string
+  // The quotation text
+  content: string
+  // The full name of the author
+  author: string
+  // The length of quote (number of characters)
+  length: number
+  // An array of tag names for this quote
+  tags: string[]
+}</code></p>
+<p><br></p>
+<h2>List Authors</h2>
+<p><code>HTTP
+GET /authors</code></p>
+<p>Get all authors matching the given query. This endpoint can be used to list authors, with several options for sorting and filter. It can also be used to get author details for one or more specific authors, using the author slug or ids.</p>
+<p><strong>Query parameters</strong></p>
+<p>| param  | type     | Description                                                                                                                                                                                                                                                                                       |
+| :----- | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| slug   | <code>string</code> | Filter authors by slug. The value can be one or more author slugs. To get multiple authors by slug, the value should be a pipe separated list of slugs.                                                                                                                                           |
+| sortBy | <code>enum</code>   | <code>Default: "name"</code> &nbsp; <code>values: "dateAdded", "dateModified", "name", "quoteCount"</code> <br> The field used to sort authors.                                                                                                                                                                      |
+| order  | <code>enum</code>   | <code>values: "asc", "desc"</code> <br> The order in which results are sorted. The default order depends on the sortBy field. For string fields that are sorted alphabetically (ie <code>name</code>), the default order is ascending. For number and date fields (ie <code>quoteCount</code>) the default order is descending. |
+| limit  | <code>Int</code>    | <code>Min: 1</code> &nbsp; <code>Max: 150</code> &nbsp; <code>Default: 20</code> <br> Sets the number of results per page.                                                                                                                                                                                                      |
+| page   | <code>Int</code>    | <code>Min: 1</code> &nbsp; <code>Default: 1</code> <br> The page of results to return. If the value is greater than the total number of pages, request will not return any results                                                                                                                                   |</p>
+<p><strong>Response</strong></p>
+<p><code>ts
+{
+  // The number of results included in this response.
+  count: number
+  // The total number of results matching this request.
+  totalCount: number
+  // The current page number
+  page: number
+  // The total number of pages matching this request
+  totalPages: number
+  // The 1-based index of the last result included in this response. This shows the
+  // current pagination offset.
+  lastItemIndex: number | null
+  // The array of authors
+  results: Array&lt;{
+    // A unique id for this author
+    _id: string
+    // A brief, one paragraph bio of the author. Source: wiki API
+    bio: string
+    // A one-line description of the author. Typically it is the person's primary
+    // occupation or what they are know for.
+    description: string
+    // The link to the author's wikipedia page or official website
+    link: string
+    // The authors full name
+    name: string
+    // A slug is a URL-friendly ID derived from the authors name. It can be used as
+    slug: string
+    // The number of quotes by this author
+    quoteCount: string
+  }&gt;
+}</code></p>
+<p><strong>Examples</strong></p>
+<p>Get all authors, sorted alphabetically by name <a href="https://api.quotable.io/authors?sortBy=name&amp;order=asc">try in browser</a></p>
+<p><code>HTTP
+GET /authors?sortBy=name</code></p>
+<p>Get all authors, sorted by number of quotes in descending order <a href="https://api.quotable.io/authors?sortBy=quoteCount&amp;order=desc">try in browser</a></p>
+<p><code>HTTP
+GET /authors?sortBy=quoteCount&amp;order=desc</code></p>
+<p>Get a single author by slug. <a href="https://api.quotable.io/authors?slug=albert-einstein">try in browser</a></p>
+<p><code>HTTP
+GET /authors?slug=albert-einstein</code></p>
+<p>Get multiple authors by slug. In this case, you provide a pipe-separated list of slugs <a href="https://api.quotable.io/authors?slug=albert-einstein|abraham-lincoln">try in browser</a></p>
+<p><code>HTTP
+GET /authors?slug=albert-einstein|abraham-lincoln</code></p>
+<p><br></p>
+<h2>Search Quotes (beta)</h2>
+<p><code>HTTP
+GET /search/quotes</code></p>
+<p>This endpoint allows you to search for quotes by keywords, content, and/or author name. Unlike the <a href="#list-quotes">List Quotes</a> endpoint, this method is powered by <a href="https://docs.atlas.mongodb.com/atlas-search/">Atlas Search</a> and is designed to power a search bar UI.</p>
+<ul>
+<li>Search results are sorted by score</li>
+<li>The query can be wrapped in quotes to search for an exact phrase. In this case, results will only include quotes that match the query exactly.</li>
+<li>Supports fuzzy search (optional). This allows for minor typos and misspelling in the search query. For more info on how this works, refer to the <a href="https://docs.atlas.mongodb.com/reference/atlas-search/text/#fields">Atlas docs</a></li>
+</ul>
+<p><strong>Query Params</strong></p>
+<p>| Param              | Type     | Description                                                                                                                                                                                                                                   |
+| :----------------- | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| query              | <code>String</code> | The search string. The query can be wrapped in quotes to search for an exact phrase.                                                                                                                                                          |
+| fields             | <code>String</code> | <code>Default: "content,author,tags"</code> <br> Specify the fields to search by. This takes a comma separated list of field names. Supported search fields are "content", "author", "tags". By default, it will search by all fields simultaneously. |
+| fuzzyMaxEdits      | <code>Int</code>    | <code>Min: 0</code> &nbsp; <code>Max: 2</code> &nbsp; <code>Default: 0</code> <br>  The maximum number of single-character edits required to match the specified search term. Setting this to zero disables fuzzy matching.                                                 |
+| fuzzyMaxExpansions | <code>Int</code>    | <code>Max: 150</code> &nbsp; <code>Min: 0</code> &nbsp; <code>Default: 50</code> <br>  When fuzzy search is enabled, this is the maximum number of variations to generate and search for. This limit applies on a per-token basis.                                          |
+| limit              | <code>Int</code>    | <code>Min: 0</code> &nbsp; <code>Max: 150</code> &nbsp; <code>Default: 20</code> <br>  The maximum number of results per page                                                                                                                                               |
+| page               | <code>Int</code>    | <code>Min: 1</code> &nbsp; <code>Default: 1</code> <br>  Sets the page number for pagination                                                                                                                                                                     |</p>
+<p><strong>Response</strong></p>
+<p><code>ts
+{
+  // The number of results included in this response.
+  count: number
+  // The total number of results matching this request.
+  totalCount: number
+  // The current page number
+  page: number
+  // The total number of pages matching this request
+  totalPages: number
+  // The 1-based index of the last result included in this response. This shows the
+  // current pagination offset.
+  lastItemIndex: number | null
+  // The array of authors
+  results: Array&lt;{
+    // A unique id for this author
+    _id: string
+    // A brief, one paragraph bio of the author. Source: wiki API
+    bio: string
+    // A one-line description of the author. Typically it is the person's primary
+    // occupation or what they are know for.
+    description: string
+    // The link to the author's wikipedia page or official website
+    link: string
+    // The authors full name
+    name: string
+    // A slug is a URL-friendly ID derived from the authors name. It can be used as
+    slug: string
+    // The number of quotes by this author
+    quoteCount: string
+  }&gt;
+}</code></p>
+<p><strong>Examples</strong></p>
+<p>Search for "every good technology is basically magic" (<a href="https://api.quotable.io/search/quotes?query=every+good+technology+is+basically+magic&amp;fields=content">try in browser</a>)</p>
+<p><code>HTTP
+GET /search/quotes?query=every good technology is basically magic</code></p>
+<blockquote>
+<p>Results:</p>
+<ul>
+<li>"Any sufficiently advanced technology is equivalent to magic."</li>
+</ul>
+</blockquote>
+<p>Search for the phrase "divided house"</p>
+<p><code>HTTP
+GET /search/quotes?query=divided house</code></p>
+<blockquote>
+<p>Results</p>
+<ul>
+<li>"A house divided against itself cannot stand."</li>
+</ul>
+</blockquote>
+<p>Search for quotes with the keywords "life" or "happiness" (<a href="https://api.quotable.io/search/quotes?query=life+happiness">try in browser</a>)</p>
+<p><code>HTTP
+GET /search/quotes?query=life happiness</code></p>
+<p>Search for quotes by an author named "kennedy" (<a href="https://api.quotable.io/search/quotes?query=kennedy&amp;fields=author">try in browser</a>)</p>
+<p><code>HTTP
+GET /search/quotes?query=Kennedy&amp;fields=author</code></p>
+<p><br></p>
+<h2>Search Authors (beta)</h2>
+<p><code>HTTP
+GET  /search/authors</code></p>
+<p>This endpoint allows you search for authors by name. It is designed to power a search bar for authors that displays autocomplete suggests as the user types.</p>
+<ul>
+<li>Powered by <a href="https://docs.atlas.mongodb.com/atlas-search/">Atlas Search</a>.</li>
+<li>Real autocomplete</li>
+<li>Results are sorted by score</li>
+<li>Parses the query into "terms". Things like initials, prefixes, suffixes, and stopwords are not considered search terms. They will still impact the score of a result, but are not required to match.</li>
+</ul>
+<p>```
+Example
+query="John F. Kennedy"
+terms=["john", "kennedy"]</p>
+<p>term      term
+  |         |
+John  F.  Kennedy  Jr.
+      |             |
+   initial        suffix</p>
+<p>Example
+query="Saint Augustine of Hippo"
+terms=["Augustine", "Hippo"]</p>
+<pre><code>    term        term
+      |          |
+</code></pre>
+<p>Saint Augustine of Hippo
+   |             |
+prefix        stopword
+```</p>
+<p><strong>Query Parameters</strong></p>
+<p>| Param          | Type      | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| :------------- | :-------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| query          | <code>String</code>  | The search query                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| autocomplete   | <code>Boolean</code> | <code>default: true</code> <br>  Enables autocomplete matching                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| matchThreshold | <code>Int</code>     | <code>Min: 1</code> &nbsp; <code>Max: 3</code> &nbsp; <code>Default: 2</code> <br>  Sets the minimum number of search terms (words) that must match for an author to be included in results. Basically, if this is set to 1, the results will include all authors that match at least one part of the name. So query="John F. Kennedy" the results would include all authors that match either "john" <code>OR</code> "kennedy". <br> If this is set to <code>2</code>: when the search query includes two or more "terms", at least two of those terms must match. So query="John F. Kennedy" would only return authors that match "John" <code>AND</code> "Kennedy". |
+| limit          | <code>Int</code>     | <code>Min:</code> &nbsp; <code>Max: 150</code> &nbsp; <code>Default: 20</code> <br>  Maximum number of results per page                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| page           | <code>Int</code>     | <code>Min: 1</code> &nbsp; <code>Default: 1</code> <br> Sets the page number for pagination                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |</p>
+<p><strong>Response</strong></p>
+<p><code>ts
+{
+  // The number of results included in this response.
+  count: number
+  // The total number of results matching this request.
+  totalCount: number
+  // The current page number
+  page: number
+  // The total number of pages matching this request
+  totalPages: number
+  // The 1-based index of the last result included in this response. This shows the
+  // current pagination offset.
+  lastItemIndex: number | null
+  // The array of authors
+  results: Array&lt;{
+    // A unique id for this author
+    _id: string
+    // A brief, one paragraph bio of the author. Source: wiki API
+    bio: string
+    // A one-line description of the author. Typically it is the person's primary
+    // occupation or what they are know for.
+    description: string
+    // The link to the author's wikipedia page or official website
+    link: string
+    // The authors full name
+    name: string
+    // A slug is a URL-friendly ID derived from the authors name. It can be used as
+    slug: string
+    // The number of quotes by this author
+    quoteCount: string
+  }&gt;
+}</code></p>
+<p><strong>Examples</strong></p>
+<p>Search for author named "Einstein" (<a href="https://api.quotable.io/search/authors?query=einstein">try in browser</a>)</p>
+<p><code>HTTP
+GET /search/authors?query=Einstein</code></p>
+<blockquote>
+<p>Results:</p>
+<ul>
+<li>Albert Einstein</li>
+</ul>
+</blockquote>
+<p>Autocomplete search for "Einstein" (<a href="https://api.quotable.io/search/authors?query=Einst">try in browser</a>)</p>
+<p><code>HTTP
+GET /search/authors?query=Einst</code></p>
+<blockquote>
+<p>Results:</p>
+<ul>
+<li>Albert Einstein</li>
+</ul>
+</blockquote>
+<p>Search for "John Adams" (<a href="https://api.quotable.io/search/authors?query=john+adams">try in browser</a>)</p>
+<p><code>HTTP
+GET /search/authors?query=john adams</code></p>
+<blockquote>
+<p>Results</p>
+<ul>
+<li>John Adams</li>
+<li>John Quincy Adams</li>
+</ul>
+</blockquote>
+<p>Search for "John Quincy Adams" (<a href="https://api.quotable.io/search/authors?query=john+quincy+adams">try in browser</a>)</p>
+<p><code>HTTP
+GET /search/authors?query=john quincy adams</code></p>
+<blockquote>
+<p>Results:</p>
+<ul>
+<li>John Quincy Adams)</li>
+<li>John Adams</li>
+</ul>
+</blockquote>
+<p><br></p>
+<h2>Get Author By Slug</h2>
+<p>Get a <em>single</em> <code>Author</code> by <code>slug</code>. This method can be used to get author details such as bio, website link, and profile image.</p>
+<p>If you want to get all <em>quotes</em> by a specific author, use the <a href="#list-quotes">/quotes</a> endpoint and filter by author author name/slug.</p>
+<p>If you want to get <em>multiple</em> authors by slug in a single request, use the <a href="#list-authors">/authors</a> endpoint and filter by <code>slug</code>.</p>
+<p><code>HTTP
+GET /authors/:id</code></p>
+<p><strong>Response</strong></p>
+<p><code>ts
+{
+  // A unique id for this author
+  _id: string
+  // A brief, one paragraph bio of the author. Source wiki API.
+  bio: string
+  // A one-line description of the author.
+  description: string
+  // The link to the author's wikipedia page or official website
+  link: string
+  // The authors full name
+  name: string
+  // A slug is a URL-friendly ID derived from the authors name. It can be used as
+  slug: string
+  // The number of quotes by this author
+  quoteCount: string
+}</code></p>
+<p><br></p>
+<h2>List Tags</h2>
+<p><code>HTTP
+GET /tags</code></p>
+<p>Get a list of all tags</p>
+<p><strong>Query parameters</strong></p>
+<p>| param  | type   | Description                                                                                                                                                                                                                                                          |
+| :----- | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| sortBy | <code>enum</code> | <code>Default: "name"</code> &nbsp; <code>values: "dateAdded", "dateModified", "name", "quoteCount"</code> <br> The field used to sort tags.                                                                                                                                            |
+| order  | <code>enum</code> | <code>values: "asc", "desc"</code> <br> The order in which results are sorted. The default order depends on the sortBy field. For string fields that are sorted alphabetically, the default order is ascending. For number and date fields, the default order is descending. |</p>
+<p><strong>Response</strong></p>
+<p><code>ts
+{
+  // The number of all tags by this request
+  count: number
+  // The array of tags
+  results: Array&lt;{
+    _id: string
+    name: string
+  }&gt;
+}</code></p>
+
+</body>
