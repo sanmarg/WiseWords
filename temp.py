@@ -1,5 +1,5 @@
 import requests, markdown
-
+#This code is for parsing the readme file from github and show as doccumentation. 
 
 url='https://raw.githubusercontent.com/lukePeavey/quotable/master/README.md'
 response = requests.get(url)
