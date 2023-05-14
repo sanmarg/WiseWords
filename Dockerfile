@@ -6,7 +6,7 @@ RUN git clone https://github.com/sanmarg/WiseWords.git ; cp -R ./WiseWords/* /ap
 
 RUN pip install -r requirements.txt
 
-EXPOSE 80
+
 
 CMD python ./main.py
 
